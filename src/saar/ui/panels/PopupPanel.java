@@ -245,7 +245,6 @@ public class PopupPanel extends JPanel {
 	
 	private void clearOptions()
 	{
-		System.out.println("options deleted");
 		for(int i = 0; i < options.length; i++)
 		{	options[i].setVisible(false); remove(options[i]);		}
 	}

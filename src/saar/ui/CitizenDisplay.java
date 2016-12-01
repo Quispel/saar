@@ -29,7 +29,7 @@ public class CitizenDisplay extends JButton {
 	static final String UP = "UP";
 	static final String DOWN = "DOWN";
 	
-	private Citizen P;
+	private Citizen citizen;
 	private float brightness = 1.0f;
 	private Collection friends;
 	private Double RP = 1.0;
@@ -38,27 +38,26 @@ public class CitizenDisplay extends JButton {
 	private Boolean selected = false;
 	
 	public String getName() { return this.getText(); }
-	public Double getRiskPercentage() {	return P.getRiskPercentage();	}
+	public Double getRiskPercentage() {	return citizen.getRiskPercentage();	}
 	public Double getAverageRiskFriends() {	return RPavgFriends;	}
 	public void setBrightness(float percentage)	{	brightness = percentage;	}
 	public String getFlow(){	return flow;	}
-	public void setOpinionDynamic(int dynamic)	{	P.setOpinionDynamic(dynamic);	}
-	public int getOpinionDynamic()	{	return P.getOpinionDynamic();	}
+	public void setOpinionDynamic(int dynamic)	{	citizen.setOpinionDynamic(dynamic);	}
+	public int getOpinionDynamic()	{	return citizen.getOpinionDynamic();	}
 	
 	public CitizenDisplay(Citizen parent)
 	{
-		P = parent;		
+		citizen = parent;	
 		this.setFont(new Font("Sans Serif", Font.PLAIN, 8));
 		
-		friends = P.getModel().getFriends().getVertices();
 	}
 	
 	public void paintComponent(Graphics g) 
 	{
 	       
-		if(P != null)
+		if(citizen != null)
 	    {
-		    Double per = P.getRiskPercentage();
+		    Double per = citizen.getRiskPercentage();
 		    int rgb = Color.HSBtoRGB((float)(0.38f*(1-per)), 1.0f, brightness);
 		    setBackground(new Color(rgb));
 	        
@@ -97,6 +96,8 @@ public class CitizenDisplay extends JButton {
 		double avgFRP = 0.0;
 		double ups = 0.0;
 		
+		friends = citizen.getModel().getFriends().getNeighbors(citizen);
+		
 		Iterator iter = friends.iterator();
 		while (iter.hasNext() )  
 		{
@@ -122,6 +123,9 @@ public class CitizenDisplay extends JButton {
 	{
 		float newB = 1.0f;
 		if(flag) newB = 0.5f;
+		
+		friends = citizen.getModel().getFriends().getNeighbors(citizen);
+		
 		Iterator iter = friends.iterator();
 		while (iter.hasNext() )  
 		{
@@ -140,7 +144,6 @@ public class CitizenDisplay extends JButton {
 		}
 		else
 		{
-			System.out.println("achieved!");
 			this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		}
 	}
