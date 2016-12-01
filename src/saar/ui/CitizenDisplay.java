@@ -49,7 +49,6 @@ public class CitizenDisplay extends JButton {
 	{
 		citizen = parent;	
 		this.setFont(new Font("Sans Serif", Font.PLAIN, 8));
-		
 	}
 	
 	public void paintComponent(Graphics g) 

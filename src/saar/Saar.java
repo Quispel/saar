@@ -7,20 +7,28 @@ package saar;
  * @author quispell
  *
  */
+
+import java.util.Collection;
+import java.util.Iterator;
+
+import com.google.common.base.Supplier;
+
+import com.beust.jcommander.*;
+
 import sim.engine.*;
 import sim.util.*;
 import ec.util.*;
 import sim.field.continuous.*;
 import sim.field.network.*;
-import saar.agents.*;
-import saar.memes.DecisionRule;
-import saar.ui.*;
-import com.beust.jcommander.*;
-import com.google.common.base.Supplier;
-import java.util.Collection;
-import java.util.Iterator;
+
 import edu.uci.ics.jung.graph.*;
 import edu.uci.ics.jung.algorithms.generators.*;
+import edu.uci.ics.jung.algorithms.generators.random.*;
+
+import saar.agents.*;
+import saar.memes.*;
+import saar.ui.*;
+
 
 
 public class Saar extends SimState
@@ -153,16 +161,18 @@ public class Saar extends SimState
 	protected void init()
 	{
 	
+		// set properties
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
 		objectiveRisks = new DoubleBag();
 		
+		// create factories for network generation
 		directedGraphFactory = new Supplier<DirectedGraph<Agent,Link>>() 
 		{
             public DirectedGraph<Agent,Link> get() { return new DirectedSparseMultigraph<Agent,Link>();}
         };
         
-        Saar model = this;
+        Saar model = this; // need reference to model in agent when declaring Supplier for it
 		vertexFactory = new Supplier<Agent>() 
 		{
 			int count; 
@@ -324,27 +334,32 @@ public class Saar extends SimState
 		census.log("Creating Social Network. Type: " + networkType + ", connected neighbours: " + connectedNeighbours + ", beta: " + beta );
 			
 		try {
-			GraphGenerator<Agent,Link> generator ;
+			GraphGenerator<Agent,Link> generator = null;
 			switch ( networkType )  {
+			// determine type of network
 				case "BarabasiAlbert":
-			 
+					//generator = new BarabasiAlbertGenerator<Agent,Link>(directedGraphFactory,vertexFactory,edgeFactory,10,5,12,); 
+					System.out.println("Barabasi Albert Generation not implemented yet !!!:");
 					break;
 				case "EppsteinPowerLaw":
-					
+					//generator = new EppsteinPowerLawGenerator<Agent,Link>(directedGraphFactory,vertexFactory,edgeFactory,numCitizens,numCitizens*8,100); 
+					System.out.println("EppsteinPowerLaw Generation not implemented yet !!!:");
 					break;
 				case "ErdosRenyi" :
-					
+					//generator = new ErdosRenyiGenerator<Agent,Link>(directedGraphFactory,vertexFactory,edgeFactory,numCitizens,0.001); 
+					System.out.println("ErdosRenyi Generation not implemented yet !!!:");
 					break;
 				case "KleinbergSmallWorld":
-					
+					generator = new KleinbergSmallWorldGenerator<Agent,Link>(directedGraphFactory,vertexFactory,edgeFactory,numCitizens/2,0.1); 
 					break;
 				case "Lattice2d":
 				default:
 					// when no networktype is given, generate lattice2d network
 					generator = new Lattice2DGenerator<Agent,Link>(directedGraphFactory,vertexFactory,edgeFactory,numCitizens/2,false); 
-					friendsNetwork = generator.get();
 					break;
 			}
+			// generate the network
+			friendsNetwork = generator.get();
 		}
 		catch (Exception e)
 		{
